@@ -1,20 +1,26 @@
-#!/bin/sh
+#!/bin/bash
 
 # CARREGA O .reshrc JURO VEY!
 [ -f "$HOME/.reshrc" ] && . "$HOME/.reshrc"
 
-while true; do
-    # Prompt limpo sem o -e bugado ;-;
-    printf "chronos@localhost:$(pwd)€ "
-    read command
+# Configura o arquivo de histórico pro read -e usar kakejskksjskskdjkd
+HISTFILE="$HOME/.resh_history"
+history -r "$HISTFILE"
 
+while true; do
+    # O prompt mais lindo de Sorocaba JURO VEY
+    # Usei o -p do read que é mais chique kakejskksjskskdjkd
+    read -e -p "chronos@localhost:$(pwd | sed "s|$HOME|~|")€ " command
+
+    # Se der Ctrl+D ou estiver vazio JURO
+    if [ $? -gt 128 ]; then exit; fi
     if [ -z "$command" ]; then continue; fi
     if [ "$command" = "exit" ]; then break; fi
 
-    # Salva no histórico manualmente kakejskksjskskdjkd
-    echo "$command" >> "$HOME/.resh_history"
+    # Salva no histórico do Bash e no arquivo JURO!
+    history -s "$command"
+    history -w "$HISTFILE"
 
-    # Tenta rodar o comando
+    # Tenta rodar a magia
     eval "$command" 2>/dev/null || echo "resh: $command: não achei ;-; JURO VEY!"
 done
-
